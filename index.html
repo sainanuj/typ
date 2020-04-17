@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="text">
+        <span id="cursor">|</span><span id="text_main">type me to find out how many words per minute you can type</span>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>WPM: <span id="wpm">0</span></p><br>
+            <p>Accuracy: <span id="accuracy">0</span></p>
+            <div class="reset">
+                <button id="restart">Try again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
