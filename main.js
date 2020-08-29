@@ -1,79 +1,86 @@
 let cursor = document.getElementById("cursor");
-let text_main = document.getElementById("text_main").innerHTML;
-let restart_button = document.getElementById("restart"); 
-let text_length = text_main.length;
-let words = text_main.split(" ").length;
-let cursor_visible = true;
-let timer_started = false;
-let analyze_wpm = true;
-let start_time;
-let end_time;
-let error_count = 0;
+let textMain = document.getElementById("text_main").innerHTML;
+let restartButton = document.getElementById("restart");
+let textLength = textMain.length;
+let words = textMain.split(" ").length;
+let cursorVisible = true;
+let timerStarted = false;
+let analyzeWpm = true;
+let startTime;
+let endTime;
+let errorCount = 0;
+let isCapslockOn;
+let isShiftPressed;
 
 window.onload = () => {
     reset();
 }
 
 setInterval(() => {
-    if (cursor_visible) {
+    if (cursorVisible) {
         cursor.style.visibility = "hidden";
-        cursor_visible = false;
+        cursorVisible = false;
     } else {
         cursor.style.visibility = "visible";
-        cursor_visible = true;
+        cursorVisible = true;
     }
 }, 700)
 
-document.addEventListener("keydown", (e) => {
-    if (!timer_started && analyze_wpm) {
-        timer_started = true;
-        start_time = new Date().getTime();
+document.addEventListener("keydown", function (e) {
+    isCapslockOn = e.getModifierState('CapsLock');
+    isShiftPressed = e.getModifierState('Shift');
+
+    if (!timerStarted && analyzeWpm) {
+        timerStarted = true;
+        startTime = new Date().getTime();
     }
 
-    if (analyze_wpm && timer_started) {
-        if (text_main.length!=0) {
-            if (text_main.charAt(0)==e.key) {
-                text_main = text_main.split("").splice(1).join("");
-                document.getElementById("text_main").innerHTML = text_main;
-
-                if (text_main.length==0) {
-                    analyze_wpm = false;
-                    timer_started = false;
-                    end_time = new Date().getTime();
-                    let w = wpm(start_time, end_time, words);
-                    let a = accuracy(error_count, text_length);
-                    // console.log("WPM = " + w);
-                    // console.log("Accuracy = " + a + "%");
-                    updateModal(w, a);
-                    document.getElementById("modal").style.visibility = "visible";
+    if (analyzeWpm && timerStarted) {
+        if (textMain.length != 0) {
+            if (e.key != 'Shift' && e.key != 'CapsLock') {
+                if (textMain.charAt(0) == e.key) {
+                    textMain = textMain.split("").splice(1).join("");
+                    document.getElementById("text_main").innerHTML = textMain;
+    
+                    if (textMain.length == 0) {
+                        analyzeWpm = false;
+                        timerStarted = false;
+                        endTime = new Date().getTime();
+                        let w = wpm(startTime, endTime, words);
+                        let a = accuracy(errorCount, textLength);
+                        // console.log("WPM = " + w);
+                        // console.log("Accuracy = " + a + "%");
+                        updateModal(w, a);
+                        document.getElementById("modal").style.visibility = "visible";
+                    }
+                } else {
+                    errorCount++;
                 }
-            } else {
-                error_count++;
             }
         }
     }
 })
 
-restart_button.addEventListener("click", () => {
+restartButton.addEventListener("click", () => {
     reset();
 })
 
 function wpm(start, end, length) {
-    return Math.floor((length/((end-start)/60000)));
+    return Math.floor((length / ((end - start) / 60000)));
 }
 
 function accuracy(error_count, text_length) {
-    return Math.floor((text_length-error_count)/text_length*100);
+    return Math.floor((text_length - error_count) / text_length * 100);
 }
 
 function reset() {
-    error_count = 0;
-    timer_started = false;
-    analyze_wpm = true;
-    document.getElementById("text_main").innerHTML = "type me to find out how many words per minute you can type";
-    text_main = document.getElementById("text_main").innerHTML;
-    text_length = text_main.length;
-    words = text_main.split(" ").length;
+    errorCount = 0;
+    timerStarted = false;
+    analyzeWpm = true;
+    document.getElementById("text_main").innerHTML = "Type me to find out how many words per minute you can type!";
+    textMain = document.getElementById("text_main").innerHTML;
+    textLength = textMain.length;
+    words = textMain.split(" ").length;
     document.getElementById("modal").style.visibility = "hidden";
 }
 
